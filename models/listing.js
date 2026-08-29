@@ -9,12 +9,13 @@ const listingSchema = new Schema({
     },
 
     description: String,
-    image:{
-        type:String,
-        required: true,
-},
+    image: {
+        type: String,
+        set: (v) => v === "" ? "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour" :
+         v ,
+    },
     
-    String,
+    
     price: Number,
     location: String,
     country: String,
@@ -22,4 +23,4 @@ const listingSchema = new Schema({
 
 
 const Listing = mongoose.model("Listing", listingSchema);
-modules.exports = Listing;
+module.exports = Listing;
