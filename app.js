@@ -28,7 +28,8 @@ app.get("/testListing", async (req, res) => {
     title:  "My New Villa",
     description: "By the beach",
     price: 1200,
-    location: "Bangladesh"
+    location: "Saint Martin",
+    country: "Bangladesh"
    });
 
    await sampleListing.save();
