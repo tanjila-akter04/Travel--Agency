@@ -11,7 +11,9 @@ const listingSchema = new Schema({
     description: String,
     image: {
         type: String,
-        set: (v) => v === "" ? "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour" :
+        default: "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour",
+        set: (v) => 
+            v === "" ? "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour" :
          v ,
     },
     
