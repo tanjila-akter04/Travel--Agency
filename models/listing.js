@@ -8,14 +8,29 @@ const listingSchema = new Schema({
 
     },
 
-    description: String,
-    image: {
+    //description: String,
+
+/*description: String,
+image: {
+    type: String,
+    default: "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour",
+    set: (v) => 
+        v === "" ? "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour" : 
+        v , 
+},*/
+
+description: String,
+
+image: {
+    filename: {
         type: String,
-        default: "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour",
-        set: (v) => 
-            v === "" ? "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour" :
-         v ,
+        default: "listingimage"
     },
+    url: {
+        type: String,
+        default: "https://ttg.com.bd/tours/package/19-exclusive-saintmartin-tour"
+    }
+},
     
     
     price: Number,
