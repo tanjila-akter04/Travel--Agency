@@ -49,6 +49,7 @@ app.get("/listings/:id", async (req, res) => {
 app.post("/listings", async (req, res) => {
     // let{title, description, price, country, location} = req.body;
     let listing = req.body.listing;
+    console.log(listing);
 });
 
 // app.get("/testListing", async (req, res) => {
