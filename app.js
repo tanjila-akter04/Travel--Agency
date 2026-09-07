@@ -48,8 +48,11 @@ app.get("/listings/:id", async (req, res) => {
 //Create Route
 app.post("/listings", async (req, res) => {
     // let{title, description, price, country, location} = req.body;
-    let listing = req.body.listing;
-    console.log(listing);
+    
+    const newListing = new Listing( req.body.listing);
+    console.log(newListing);
+    await newListing.save();
+    res.redirect("/listings");
 });
 
 // app.get("/testListing", async (req, res) => {
