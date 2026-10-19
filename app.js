@@ -51,15 +51,27 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 //Create Route
+
+
 app.post("/listings", async (req, res) => {
-    // let{title, description, price, country, location} = req.body;
-    
-    const newListing = new Listing( req.body.listing);
+    console.log("Form data received:", req.body);
+
+    const newListing = new Listing(req.body.listing);
     console.log(newListing);
+
     await newListing.save();
     res.redirect("/listings");
 });
 
+
+
+
+
+// app.post("/listings", async (req, res) => {
+//     const newListing = new Listing(req.body.listing);
+//     await newListing.save();
+//     res.redirect("/listings");
+// });
 
 //Edit Route
 app.get("/listings/:id/edit", async (req, res) => {
