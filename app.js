@@ -54,8 +54,12 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 }));
 
 //Create Route
-app.post("/listings", wrapAsync(async (req, res, next) => {
-    
+app.post(
+    "/listings", 
+    wrapAsync(async (req, res, next) => {
+       if(!req.body.listing){
+        throw new ExpressError(400, "send valid data for listing");
+       }
     const newListing = new Listing(req.body.listing);
    await newListing.save();
    res.redirect("/listings"); 

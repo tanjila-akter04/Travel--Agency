@@ -1,0 +1,427 @@
+{
+  "info": {
+    "_postman_id": "752d91d0-06e4-4d73-90d9-84ee6750502c",
+    "name": "Travel Agency",
+    "description": "Postman requests for the implemented listing routes. Run with the app and MongoDB available at localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "listingId",
+      "value": ""
+    },
+    {
+      "key": "updatedTitle",
+      "value": "Postman updated listing"
+    }
+  ],
+  "item": [
+    {
+      "name": "Pages",
+      "item": [
+        {
+          "name": "Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Home responds successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include('Hi, I am root');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List listings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listings page renders', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include('All Listings');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "New listing form",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/listings/new",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings",
+                "new"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('New listing form renders', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include('Create a New Listing');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Listing CRUD workflow",
+      "item": [
+        {
+          "name": "Create listing",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('listingTitle', 'Postman listing ' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listing is created and appears in the index', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const title = pm.collectionVariables.get('listingTitle');",
+                  "    const html = pm.response.text();",
+                  "    const links = html.matchAll(/<a href=\"\\/listings\\/([a-f0-9]{24})\" class=\"listing-link\">([\\s\\S]*?)<\\/a>/gi);",
+                  "    let listingId;",
+                  "    for (const link of links) {",
+                  "        if (link[2].includes(title)) {",
+                  "            listingId = link[1];",
+                  "            break;",
+                  "        }",
+                  "    }",
+                  "    pm.expect(listingId, 'created listing link').to.be.ok;",
+                  "    pm.collectionVariables.set('listingId', listingId);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "listing[title]",
+                  "value": "{{listingTitle}}",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[description]",
+                  "value": "Created by the Postman CRUD workflow",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[image][url]",
+                  "value": "https://example.com/postman-listing.jpg",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[price]",
+                  "value": "1500",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[location]",
+                  "value": "Cox's Bazar",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[country]",
+                  "value": "Bangladesh",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/listings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Show created listing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/listings/{{listingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings",
+                "{{listingId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Created listing details render', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get('listingTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Edit listing form",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/listings/{{listingId}}/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings",
+                "{{listingId}}",
+                "edit"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Edit listing form renders', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include('Edit your Listing');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "listing[title]",
+                  "value": "{{updatedTitle}}",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[description]",
+                  "value": "Updated by the Postman CRUD workflow",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[image][url]",
+                  "value": "https://example.com/postman-listing-updated.jpg",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[price]",
+                  "value": "1800",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[location]",
+                  "value": "Saint Martin",
+                  "type": "text"
+                },
+                {
+                  "key": "listing[country]",
+                  "value": "Bangladesh",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/listings/{{listingId}}?_method=PUT",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings",
+                "{{listingId}}"
+              ],
+              "query": [
+                {
+                  "key": "_method",
+                  "value": "PUT"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listing is updated', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get('updatedTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete listing",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/listings/{{listingId}}?_method=DELETE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "listings",
+                "{{listingId}}"
+              ],
+              "query": [
+                {
+                  "key": "_method",
+                  "value": "DELETE"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listing is deleted from the index', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.text()).not.to.include(pm.collectionVariables.get('updatedTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Errors",
+      "item": [
+        {
+          "name": "Unknown route returns 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/postman-not-found",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postman-not-found"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Unknown route returns 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "    pm.expect(pm.response.text()).to.include('Page Not Found!');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
